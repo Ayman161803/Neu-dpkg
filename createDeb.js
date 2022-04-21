@@ -1,10 +1,15 @@
+
+
 const config = require("./neutralino.config.json")
 path = require("path")
 const fs = require("fs")
 const { exec } = require("child_process")
- path = require("path")
+path = require("path")
 
 let generateControlFile = (arch) => {
+
+    console.log("Generating Control file data......")
+
     let packageTitle = config.cli.binaryName
     let version = config.version
     let desc = config.description
@@ -35,6 +40,10 @@ let generateControlFile = (arch) => {
 }
 
 let generateDesktopFile = (arch) => {
+
+    console.log("Generating Desktop file data......")
+
+
     let packageTitle = config.cli.binaryName
     let binaryName = config.modes.window.title + "-linux_" + "x64"
     let version = config.version
@@ -49,50 +58,48 @@ let generateDesktopFile = (arch) => {
     desktopFile += "Terminal=" + false + "\n"
     desktopFile += "Exec=/usr/bin/" + binaryName + "\n"
     desktopFile += "Name=" + packageTitle + "\n"
-    desktopFile += "Icon=/usr/share/applications/"+ packageTitle+"/" + icon + "\n"
+    desktopFile += "Icon=/usr/share/applications/" + packageTitle + "/" + icon + "\n"
 
-    console.log(desktopFile)
     return desktopFile
 }
-
-generateControlFile('x64')
-
-generateDesktopFile('x64')
 
 
 let package = async (arch) => {
 
-    let debianDir = config.cli.binaryName+"/DEBIAN"
-    let desktopDir = config.cli.binaryName+"/usr/share/applications"
-    let binDir = config.cli.binaryName+"/usr/bin"
+    let debianDir = config.cli.binaryName + "/DEBIAN"
+    let desktopDir = config.cli.binaryName + "/usr/share/applications"
+    let binDir = config.cli.binaryName + "/usr/bin"
 
-    fs.mkdirSync(debianDir,{recursive:true})
-    fs.mkdirSync(binDir,{recursive:true})
-    fs.mkdirSync(desktopDir,{recursive:true})
+    fs.mkdirSync(debianDir, { recursive: true })
+    fs.mkdirSync(binDir, { recursive: true })
+    fs.mkdirSync(desktopDir, { recursive: true })
 
-    let controlStream = fs.createWriteStream(debianDir+"/control")
+    let controlStream = fs.createWriteStream(debianDir + "/control")
 
     controlStream.write(generateControlFile(arch))
 
     controlStream.end()
 
 
-    let desktopStream = fs.createWriteStream(desktopDir+"/"+config.cli.binaryName+".desktop");
+    let desktopStream = fs.createWriteStream(desktopDir + "/" + config.cli.binaryName + ".desktop");
 
     desktopStream.write(generateDesktopFile(arch))
 
     desktopStream.end()
 
 
-    fs.copyFileSync("dist/"+config.cli.binaryName+"/"+config.cli.binaryName+"-linux_"+arch,binDir+"/"+config.cli.binaryName+"-linux_"+arch)
+    fs.copyFileSync("dist/" + config.cli.binaryName + "/" + config.cli.binaryName + "-linux_" + arch, binDir + "/" + config.cli.binaryName + "-linux_" + arch)
 
-    fs.copyFileSync("dist/"+config.cli.binaryName+"/resources.neu",binDir+"/resources.neu")
+    fs.copyFileSync("dist/" + config.cli.binaryName + "/resources.neu", binDir + "/resources.neu")
 
-    fs.mkdirSync(desktopDir+"/"+config.cli.binaryName+"/",{recursive:true})
+    fs.mkdirSync(desktopDir + "/" + config.cli.binaryName + "/", { recursive: true })
 
-    fs.copyFileSync(config.modes.window.icon.slice(1),desktopDir+"/"+config.cli.binaryName+"/"+path.basename(config.modes.window.icon))
+    fs.copyFileSync(config.modes.window.icon.slice(1), desktopDir + "/" + config.cli.binaryName + "/" + path.basename(config.modes.window.icon))
 
     exec("dpkg --build " + config.cli.binaryName + "/")
-    console.log(binDir+"/"+config.cli.binaryName+"-linux_"+arch)
+    //console.log(binDir+"/"+config.cli.binaryName+"-linux_"+arch)
+
+    console.log("Successfully packaged your amazing app into a debian package");
+
 }
 package("x64")
