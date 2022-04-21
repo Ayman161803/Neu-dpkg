@@ -1,6 +1,10 @@
 # Neu-dpkg
 Contains a script file to generate debian packages from a Neutralino Application
 
+## Requirements
+- Node
+- dpkg 
+
 ## Usage
 
 Run build command through CLI
