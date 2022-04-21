@@ -2,6 +2,13 @@
 Contains a script file to generate debian packages from a Neutralino Application
 
 ## Usage
+
+Run build command through CLI
+
+```
+neu build
+```
+
 Place the script into the project Directory and run the node scripts
 
 ```
