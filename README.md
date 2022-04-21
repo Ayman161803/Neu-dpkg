@@ -3,7 +3,7 @@ Contains a script file to generate debian packages from a Neutralino Application
 
 ## Requirements
 - Node
-- dpkg 
+- Dpkg 
 
 ## Usage
 
